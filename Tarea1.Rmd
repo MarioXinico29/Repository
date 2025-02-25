@@ -1,0 +1,128 @@
+---
+title: "Tarea 1"
+author: "Mario Xinico"
+output: 
+html_document: default
+pdf_document: default
+word_document: default
+---
+
+# PROBLEMAS DE ANOREXIA Y BULIMIA
+```{r setup, echo = FALSE, include = FALSE}
+###############CARGA DE LIBRERIAS 
+library(readxl)
+library(dplyr)
+library(ggplot2)
+library(rmarkdown)
+
+############### IMPORTAR DATOS
+Tarea_1 <- read_xlsx("/Users/MarioXinico/Desktop/Riesgos Financieros y Ciencias Actuariales/Estadística/Datos_tarea_1.xlsx")
+Problema_2 <- read_xlsx("/Users/MarioXinico/Desktop/Riesgos Financieros y Ciencias Actuariales/Estadística/Datos_tarea_1.xlsx", sheet = "Hoja2")
+
+############### TABLA DE DISTRIBUCION DE FRECUENCIAS ---PROBLEMA I---
+Frec <- Tarea_1 %>%
+  count(Sintoma) %>%
+  arrange(desc(n))
+knitr::opts_chunk$set(echo = FALSE)
+```
+TABLA DE DISTRIBUCION DE FRECUENCIAS
+```{r echo=FALSE}
+knitr::kable(Frec, "pipe", aling="l")
+```
+TABLA DE DISTRIBUCION DE FRECUENCIAS COMPLEMENTADA
+```{r}
+Frecuencias <- Frec %>%
+  rename('Frecuencias Absolutas' = n)
+Total_Frecuencias <- sum(Frecuencias$'Frecuencias Absolutas')
+
+Frecuencias <- Frecuencias %>%
+  mutate(`Frecuencias Relativas` = `Frecuencias Absolutas` / Total_Frecuencias,
+         `Frecuencias Acumuladas Absolutas` = cumsum(`Frecuencias Absolutas`),
+         `Frecuencias Acumuladas Relativas` = cumsum(`Frecuencias Relativas`))
+knitr::kable(Frecuencias, "pipe", aling="lcccc")
+```
+GRAFICO DE FRECUENCIAS DE SINTOMAS DE ANOREXIA
+```{r}
+ggplot(Frecuencias, aes(x = reorder(Sintoma, `Frecuencias Absolutas`), y = `Frecuencias Absolutas`)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  geom_text(aes(label = `Frecuencias Absolutas`), vjust = -0.3) +
+  labs(x = "Sintomas", y = "Frecuencia", title = "Distribucion de Frecuencias de Sintomas de Anorexia") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+
+
+
+
+MEDIDAS ESTADISTICAS BASICAS
+```{r}
+Medidas_estadisticas <- Frecuencias %>%
+  summarise(
+    Media = mean(`Frecuencias Absolutas`),
+    Mediana = median(`Frecuencias Absolutas`),
+    Moda = Frecuencias$Sintoma[which.max(Frecuencias$`Frecuencias Absolutas`)],
+    Desviacion_Estandar = sd(`Frecuencias Absolutas`),
+    Rango = max(`Frecuencias Absolutas`) - min(`Frecuencias Absolutas`)
+    )
+knitr::kable(Medidas_estadisticas, "pipe", aling="lcccc")
+```
+
+
+# DESORDENES DE CONDUCTA EN NIÑOS
+```{r}
+Frec_1 <- Problema_2 %>%
+  count(Datos) %>%
+  arrange(desc(n))
+knitr::kable(Frec_1, "pipe", aling="lcccc")
+```
+
+```{r}
+Frecuencias_1 <- Frec_1 %>%
+  rename('Frecuencias Absolutas' = n)
+Total_Frecuencias_1 <- sum(Frecuencias_1$'Frecuencias Absolutas')
+
+Frecuencias_1 <- Frecuencias_1 %>%
+  mutate(`Frecuencias Relativas` = `Frecuencias Absolutas` / Total_Frecuencias_1,
+         `Frecuencias Acumuladas Absolutas` = cumsum(`Frecuencias Absolutas`),
+         `Frecuencias Acumuladas Relativas` = cumsum(`Frecuencias Relativas`))
+
+print(Frecuencias_1)
+```
+
+GRAFICO DE FRECUENCIAS DE SINTOMAS DE ANOREXIA
+```{r}
+ggplot(Frecuencias_1, aes(x = reorder(Datos, `Frecuencias Absolutas`), y = `Frecuencias Absolutas`)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  geom_text(aes(label = `Frecuencias Absolutas`), vjust = -0.3) +
+  labs(x = "Horas de Tratamiento", y = "Frecuencia", title = "Distribucion de Frecuencias de Horas de Tratamiento") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+
+
+
+
+MEDIDAS ESTADISTICAS BASICAS 
+```{r}
+Medidas_estadisticas_1 <- Frecuencias_1 %>%
+  summarise(
+    Media = mean(`Frecuencias Absolutas`),
+    Mediana = median(`Frecuencias Absolutas`),
+    Moda = Frecuencias_1$Datos[which.max(Frecuencias_1$`Frecuencias Absolutas`)],
+    Desviacion_Estandar = sd(`Frecuencias Absolutas`),
+    Rango = max(`Frecuencias Absolutas`) - min(`Frecuencias Absolutas`)
+  )
+print(Medidas_estadisticas_1)
+```
+
+
+
+
+
+SITIO WEB AREA DE TRABAJO 
+
+https://www.secmca.org/secmcadatos/ 
