@@ -1,0 +1,68 @@
+---
+title: "Tarea_2"
+author: "Mario Xinico"
+date: "2/25/2025"
+output: html_document
+---
+
+# NUMERO DE ACCIDENTES POR DEPARTAMENTO
+```{r setup, echo = FALSE, include = FALSE}
+###############CARGA DE LIBRERIAS 
+library(readxl)
+library(dplyr)
+library(ggplot2)
+library(rmarkdown)
+
+### DOS CONCULUSIONES
+
+############### IMPORTAR DATOS
+Tarea_2 <- read_xlsx("/Users/MarioXinico/Desktop/Riesgos Financieros y Ciencias Actuariales/Estadística/BASES_TAREAS/Datos_INE.xlsx")
+
+############### TABLA DE DISTRIBUCION DE FRECUENCIAS ---PROBLEMA I---
+knitr::kable(Tarea_2)
+knitr::opts_chunk$set(echo = FALSE)
+```
+MEDIDAS DE TENDENCIA CENTRAL DE ACCIDENTES POR DEPARTAMENTO
+```{r echo=FALSE}
+data_accidentes <- Tarea_2[, -1]
+
+### MEDIDAS DE TENDENCIA CENTRAL
+media_accidentes <- apply(data_accidentes, 2, mean, na.rm = TRUE)
+mediana_accidentes <- apply(data_accidentes, 2, median, na.rm = TRUE)
+### MEDIDAS DE DISPERSION
+rango_accidentes <- apply(data_accidentes, 2, function(x) max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+varianza_accidentes <- apply(data_accidentes, 2, var, na.rm = TRUE)
+desviacion_accidentes <- apply(data_accidentes, 2, sd, na.rm = TRUE)
+
+medidas_tendencia <- data.frame(
+  Departamento = colnames(data_accidentes),
+  Media = format(round(media_accidentes, 0), big.mark = ",", scientific = FALSE),
+  Mediana = format(round(mediana_accidentes, 0), big.mark = ",", scientific = FALSE),
+  Rango = format(round(rango_accidentes, 0), big.mark = ",", scientific = FALSE),
+  Varianza = format(round(varianza_accidentes, 0), big.mark = ",", scientific = FALSE),
+  Desviacion_Estandar = format(round(desviacion_accidentes,0), big.mark = ",", scientific = FALSE)
+)
+
+row.names(medidas_tendencia) <- NULL
+
+  knitr::kable(medidas_tendencia)
+```
+
+TABLA DE DISTRIBUCION DE FRECUENCIAS COMPLEMENTADA
+```{r}
+media_accidentes_final <- media_accidentes[!names(media_accidentes) == "República"]
+media_ordenada <- sort(media_accidentes_final, decreasing = TRUE)
+
+barplot(media_ordenada,
+        main = "Media de Accidentes por Departamento",
+        col = "skyblue",
+        las = 2,
+        names.arg = names(media_ordenada),
+        cex.names = 0.8,
+        ylim = c(0, max(media_ordenada) + 1000),
+        border = "white")
+```
+
+COMENTARIOS FINALES:
+EL DEPARTAMENTO QUE PRESENTA LA MAYOR CANTIDAD PROMEDIO DE ACCIDENTES CORRESPONDE AL DEPARTMENTO DE GUATEMALA. SE CALCULARON LAS MEDIDAS DE TENDENCIA CENTRAL Y DE DISPERSION BASICAS. 
+
